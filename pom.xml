@@ -213,7 +213,7 @@
             <show>public</show>
             <top><![CDATA[
 <link rel="stylesheet" type="text/css" href="{@docRoot}/resources/prism.css"/>
-<link rel="stylesheet" type="text/css" href="{@docRoot}/resources/mock-loggers.css"/>
+<link rel="stylesheet" type="text/css" href="{@docRoot}/resources/monorate.css"/>
 							]]></top>
           </configuration>
           <groupId>org.apache.maven.plugins</groupId>
