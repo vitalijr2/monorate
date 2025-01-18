@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doReturn;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,24 +22,36 @@ class MonorateServiceTest {
   @Spy
   private MonorateService monorateService;
 
-  @ParameterizedTest(name = "{0}, inverse: {2}")
-  @CsvSource({"USD,1.23,false", "ISK,1,false", "OMR,1.235,false",
-      "USD,1.23,true", "ISK,1.23,true", "OMR,1.23,true"})
-  void getConvertedAmount(String currencyCode, BigDecimal expectedAmount, boolean inverse) {
+  @DisplayName("Direct conversion")
+  @ParameterizedTest(name = "{1} => {2}")
+  @CsvSource({"USD,1,1.23", "ISK,10,12.35", "OMR,100,123.46"})
+  void directConversion(String currencyCode, BigDecimal amount, BigDecimal expectedAmount) {
     // given
     var currency = Currency.getInstance(currencyCode);
 
-    if (inverse) {
-      doReturn(RATE).when(monorateService).getInverseRate(currency);
-    } else {
-      doReturn(RATE).when(monorateService).getRate(currency);
-    }
+    doReturn(RATE).when(monorateService).getRate(currency);
 
     // when
-    var amount = monorateService.getConvertedAmount(BigDecimal.ONE, currency, inverse);
+    var convertedAmount = monorateService.directConversion(amount, currency);
 
     // then
-    assertEquals(expectedAmount, amount);
+    assertEquals(expectedAmount, convertedAmount);
+  }
+
+  @DisplayName("Inverse conversion")
+  @ParameterizedTest(name = "{0}")
+  @CsvSource({"USD,1.23", "ISK,1", "OMR,1.235"})
+  void inverseConversion(String currencyCode, BigDecimal expectedAmount) {
+    // given
+    var currency = Currency.getInstance(currencyCode);
+
+    doReturn(RATE).when(monorateService).getInverseRate(currency);
+
+    // when
+    var convertedAmount = monorateService.inverseConversion(BigDecimal.ONE, currency);
+
+    // then
+    assertEquals(expectedAmount, convertedAmount);
   }
 
 }

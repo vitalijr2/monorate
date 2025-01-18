@@ -5,14 +5,17 @@ import static java.math.RoundingMode.HALF_EVEN;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
 public interface MonorateService {
 
-  default BigDecimal getConvertedAmount(BigDecimal amount, Currency currency, boolean inverse) {
-    var rate = inverse ? getInverseRate(currency) : getRate(currency);
-    var scale = inverse ? Currency.getInstance("UAH").getDefaultFractionDigits() : currency.getDefaultFractionDigits();
+  default BigDecimal directConversion(@NotNull BigDecimal amount, @NotNull Currency currency) {
+    return amount.multiply(getRate(currency))
+        .setScale(Currency.getInstance("UAH").getDefaultFractionDigits(), HALF_EVEN);
+  }
 
-    return amount.multiply(rate).setScale(scale, HALF_EVEN);
+  default BigDecimal inverseConversion(@NotNull BigDecimal amount, @NotNull Currency currency) {
+    return amount.multiply(getInverseRate(currency)).setScale(currency.getDefaultFractionDigits(), HALF_EVEN);
   }
 
   Set<Currency> getCurrencies();

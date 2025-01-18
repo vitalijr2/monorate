@@ -10,10 +10,6 @@
         <groupId>org.jacoco</groupId>
       </plugin>
       <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <groupId>org.apache.maven.plugins</groupId>
-      </plugin>
-      <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <groupId>org.apache.maven.plugins</groupId>
       </plugin>
@@ -26,10 +22,6 @@
     </dependency>
     <dependency>
       <artifactId>junit-jupiter-api</artifactId>
-      <groupId>org.junit.jupiter</groupId>
-    </dependency>
-    <dependency>
-      <artifactId>junit-jupiter-engine</artifactId>
       <groupId>org.junit.jupiter</groupId>
     </dependency>
     <dependency>
