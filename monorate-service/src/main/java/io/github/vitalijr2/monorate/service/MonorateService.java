@@ -9,19 +9,21 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MonorateService {
 
-  default BigDecimal directConversion(@NotNull BigDecimal amount, @NotNull Currency currency) {
+  default BigDecimal directConversion(@NotNull BigDecimal amount, @NotNull Currency currency)
+      throws UnsupportedCurrencyException {
     return amount.multiply(getRate(currency))
         .setScale(Currency.getInstance("UAH").getDefaultFractionDigits(), HALF_EVEN);
   }
 
-  default BigDecimal inverseConversion(@NotNull BigDecimal amount, @NotNull Currency currency) {
+  default BigDecimal inverseConversion(@NotNull BigDecimal amount, @NotNull Currency currency)
+      throws UnsupportedCurrencyException {
     return amount.multiply(getInverseRate(currency)).setScale(currency.getDefaultFractionDigits(), HALF_EVEN);
   }
 
   Set<Currency> getCurrencies();
 
-  BigDecimal getInverseRate(Currency currency);
+  BigDecimal getInverseRate(@NotNull Currency currency) throws UnsupportedCurrencyException;
 
-  BigDecimal getRate(Currency currency);
+  BigDecimal getRate(@NotNull Currency currency) throws UnsupportedCurrencyException;
 
 }
