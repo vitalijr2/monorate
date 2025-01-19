@@ -1,4 +1,4 @@
-package io.github.vitalijr2.monorate.service;
+package io.github.vitalijr2.monorate.conversion;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,12 +20,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("fast")
-class MonorateServiceTest {
+class ConverterTest {
 
   private static final BigDecimal RATE = new BigDecimal("1.23456789");
 
   @Spy
-  private MonorateService monorateService;
+  private Converter converter;
 
   @DisplayName("Direct conversion")
   @ParameterizedTest(name = "{1} => {2}")
@@ -35,10 +35,10 @@ class MonorateServiceTest {
     // given
     var currency = Currency.getInstance(currencyCode);
 
-    doReturn(RATE).when(monorateService).getRate(currency);
+    doReturn(RATE).when(converter).getRate(currency);
 
     // when
-    var convertedAmount = monorateService.directConversion(amount, currency);
+    var convertedAmount = converter.directConversion(amount, currency);
 
     // then
     assertEquals(expectedAmount, convertedAmount);
@@ -51,10 +51,10 @@ class MonorateServiceTest {
     // given
     var currency = Currency.getInstance(currencyCode);
 
-    doReturn(RATE).when(monorateService).getInverseRate(currency);
+    doReturn(RATE).when(converter).getInverseRate(currency);
 
     // when
-    var convertedAmount = monorateService.inverseConversion(BigDecimal.ONE, currency);
+    var convertedAmount = converter.inverseConversion(BigDecimal.ONE, currency);
 
     // then
     assertEquals(expectedAmount, convertedAmount);
@@ -67,15 +67,15 @@ class MonorateServiceTest {
     var amount = BigDecimal.ONE;
     var currency = Currency.getInstance("USD");
 
-    doThrow(new UnsupportedCurrencyException("inverse conversion")).when(monorateService)
+    doThrow(new UnsupportedCurrencyException("inverse conversion")).when(converter)
         .getInverseRate(isA(Currency.class));
-    doThrow(new UnsupportedCurrencyException("direct conversion")).when(monorateService).getRate(isA(Currency.class));
+    doThrow(new UnsupportedCurrencyException("direct conversion")).when(converter).getRate(isA(Currency.class));
 
     // when
     var exceptionOnDirectConversion = assertThrows(UnsupportedCurrencyException.class,
-        () -> monorateService.directConversion(amount, currency));
+        () -> converter.directConversion(amount, currency));
     var exceptionOnInverseConversion = assertThrows(UnsupportedCurrencyException.class,
-        () -> monorateService.inverseConversion(amount, currency));
+        () -> converter.inverseConversion(amount, currency));
 
     assertAll(() -> assertEquals("direct conversion", exceptionOnDirectConversion.getMessage()),
         () -> assertEquals("inverse conversion", exceptionOnInverseConversion.getMessage()));

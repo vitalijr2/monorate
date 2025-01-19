@@ -1,4 +1,4 @@
-package io.github.vitalijr2.monorate.service;
+package io.github.vitalijr2.monorate.conversion;
 
 public class UnsupportedCurrencyException extends Exception {
 
